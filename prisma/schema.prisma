@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  firstName String
+  lastName  String
+  image     String?
+  role      Role     @default(user)
+  result    Result[]
+}
+
+enum Role {
+  user
+  admin
+}
+
+model Result {
+  id            Int          @id @default(autoincrement())
+  score         Int
+  createAt      DateTime     @default(now())
+  GameSession   GameSession? @relation(fields: [gameSessionId], references: [id])
+  gameSessionId Int?
+  User          User?        @relation(fields: [userId], references: [id])
+  userId        Int?
+}
+
+model GameSession {
+  id         Int        @id @default(autoincrement())
+  mode       GameMode
+  imageUrl   String
+  createAt   DateTime   @default(now())
+  updateAt   DateTime   @default(now())
+  result     Result[]
+  question   Question[]
+  Category   Category?  @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+}
+
+enum GameMode {
+  choice
+  clue
+  imageTile
+}
+
+model Question {
+  id            Int          @id @default(autoincrement())
+  content       String
+  mediaType     MediaType
+  mediaUrl      String
+  maxScore      Int
+  createAt      DateTime     @default(now())
+  updateAt      DateTime     @updatedAt
+  clueAnswer    String
+  clue          Clue[]
+  choice        Choice[]
+  imageTile     ImageTile    @relation(fields: [imageTileId], references: [id])
+  GameSession   GameSession? @relation(fields: [gameSessionId], references: [id])
+  gameSessionId Int?
+  Category      Category?    @relation(fields: [categoryId], references: [id])
+  categoryId    Int?
+  imageTileId   Int
+}
+
+enum MediaType {
+  image
+  video
+  sound
+  none
+}
+
+model Choice {
+  id         Int       @id @default(autoincrement())
+  choiceText String
+  isCorrect  Boolean
+  Question   Question? @relation(fields: [questionId], references: [id])
+  questionId Int?
+}
+
+model Clue {
+  id         Int       @id @default(autoincrement())
+  clueText   String
+  Question   Question? @relation(fields: [questionId], references: [id])
+  questionId Int?
+}
+
+model Category {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String
+  imageUrl    String
+  gameSession GameSession[]
+  question    Question[]
+}
+
+model ImageTile {
+  id           Int        @id @default(autoincrement())
+  tileIndex    Int
+  imageCropUrl String
+  Question     Question[]
+}

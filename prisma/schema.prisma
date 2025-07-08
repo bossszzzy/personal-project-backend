@@ -15,14 +15,14 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  firstName String
-  lastName  String
-  image     String?
-  role      Role     @default(user)
-  result    Result[]
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  password     String
+  firstName    String
+  lastName     String
+  image        String?
+  role         Role          @default(user)
+  playSessions PlaySession[]
 }
 
 enum Role {
@@ -30,26 +30,34 @@ enum Role {
   admin
 }
 
-model Result {
-  id            Int          @id @default(autoincrement())
-  score         Int
-  createAt      DateTime     @default(now())
-  GameSession   GameSession? @relation(fields: [gameSessionId], references: [id])
-  gameSessionId Int?
-  User          User?        @relation(fields: [userId], references: [id])
-  userId        Int?
+model PlaySession {
+  id         Int                   @id @default(autoincrement())
+  user       User                  @relation(fields: [userId], references: [id])
+  userId     Int
+  createAt   DateTime              @default(now())
+  gameMode   GameMode
+  totalScore Int                   @default(0)
+  answers    PlayAnswer[]
+  questions  PlaySessionQuestion[]
+  Category   Category?             @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  isFinished Boolean @default(false)
 }
 
-model GameSession {
-  id         Int        @id @default(autoincrement())
-  mode       GameMode
-  imageUrl   String
-  createAt   DateTime   @default(now())
-  updateAt   DateTime   @default(now())
-  result     Result[]
-  question   Question[]
-  Category   Category?  @relation(fields: [categoryId], references: [id])
-  categoryId Int?
+model ChoiceQuestion {
+  id           Int                   @id @default(autoincrement())
+  gameMode     GameMode              @default(choice)
+  content      String
+  mediaType    MediaType
+  mediaUrl     String?
+  maxScore     Int
+  createAt     DateTime              @default(now())
+  updateAt     DateTime              @updatedAt
+  choices      Choice[]
+  category     Category?             @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  playSessions PlaySessionQuestion[]
+  PlayAnswer   PlayAnswer[]
 }
 
 enum GameMode {
@@ -58,23 +66,44 @@ enum GameMode {
   imageTile
 }
 
-model Question {
-  id            Int          @id @default(autoincrement())
-  content       String
-  mediaType     MediaType
-  mediaUrl      String
-  maxScore      Int
-  createAt      DateTime     @default(now())
-  updateAt      DateTime     @updatedAt
-  clueAnswer    String
-  clue          Clue[]
-  choice        Choice[]
-  imageTile     ImageTile    @relation(fields: [imageTileId], references: [id])
-  GameSession   GameSession? @relation(fields: [gameSessionId], references: [id])
-  gameSessionId Int?
-  Category      Category?    @relation(fields: [categoryId], references: [id])
-  categoryId    Int?
-  imageTileId   Int
+model PlaySessionQuestion {
+  playSession   PlaySession    @relation(fields: [playSessionId], references: [id])
+  playSessionId Int
+  question      ChoiceQuestion @relation(fields: [questionId], references: [id])
+  questionId    Int
+  assignedAt    DateTime       @default(now())
+
+  @@id([playSessionId, questionId])
+}
+
+model PlayAnswer {
+  id            Int            @id @default(autoincrement())
+  playSession   PlaySession    @relation(fields: [playSessionId], references: [id])
+  playSessionId Int
+  question      ChoiceQuestion @relation(fields: [questionId], references: [id])
+  questionId    Int
+  isCorrect     Boolean
+  scoreEarned   Int            @default(0)
+  Choice        Choice?        @relation(fields: [choiceId], references: [id])
+  choiceId      Int?
+}
+
+model Choice {
+  id               Int            @id @default(autoincrement())
+  choiceText       String
+  isCorrect        Boolean
+  choiceQuestion   ChoiceQuestion @relation(fields: [choiceQuestionId], references: [id])
+  choiceQuestionId Int
+  playAnswer       PlayAnswer[]
+}
+
+model Category {
+  id              Int              @id @default(autoincrement())
+  name            String
+  description     String
+  imageUrl        String
+  choiceQuestions ChoiceQuestion[]
+  playSession     PlaySession[]
 }
 
 enum MediaType {
@@ -82,35 +111,4 @@ enum MediaType {
   video
   sound
   none
-}
-
-model Choice {
-  id         Int       @id @default(autoincrement())
-  choiceText String
-  isCorrect  Boolean
-  Question   Question? @relation(fields: [questionId], references: [id])
-  questionId Int?
-}
-
-model Clue {
-  id         Int       @id @default(autoincrement())
-  clueText   String
-  Question   Question? @relation(fields: [questionId], references: [id])
-  questionId Int?
-}
-
-model Category {
-  id          Int           @id @default(autoincrement())
-  name        String
-  description String
-  imageUrl    String
-  gameSession GameSession[]
-  question    Question[]
-}
-
-model ImageTile {
-  id           Int        @id @default(autoincrement())
-  tileIndex    Int
-  imageCropUrl String
-  Question     Question[]
 }

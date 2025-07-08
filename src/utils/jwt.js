@@ -10,7 +10,7 @@ export const verifyToken = (token) => {
 export const generateToken = (payload) => {
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     algorithm: "HS256",
-    expiresIn: "1h"
+    expiresIn: "1d"
   });
   return token;
 };
@@ -18,7 +18,7 @@ export const generateToken = (payload) => {
 export const resetToken = (id) => {
   const token = jwt.sign({id}, process.env.JWT_RESETKEYS, {
     algorithm: "HS256",
-    expiresIn: "1h"
+    expiresIn: "1d"
   })
   return token
 }
@@ -26,7 +26,7 @@ export const resetToken = (id) => {
 export const verifyResetToken = (token) =>{
   const payload = jwt.verify(token, process.env.JWT_RESETKEYS,{
     algorithms: ["HS256"],
-    expiresIn: "1h"
+    expiresIn: "1d"
   })
   return payload
 }

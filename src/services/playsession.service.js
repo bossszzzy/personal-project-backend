@@ -58,7 +58,7 @@ export const getPlaySessionById = async (id, userId) => {
 
 export const answerQuestion = async ({ playSessionId, questionId, userId, choiceId }) => {
   const result = {
-    status: "ok", 
+    status: "ok",
     answer: null,
   };
 
@@ -121,35 +121,35 @@ export const answerQuestion = async ({ playSessionId, questionId, userId, choice
   return result;
 };
 
-export const finishPlaySession =async(playSessionId, userId) =>{
+export const finishPlaySession = async (playSessionId, userId) => {
   const session = await prisma.playSession.findUnique({
-    where:{id: playSessionId},
-    include:{
+    where: { id: playSessionId },
+    include: {
       answers: true,
-      questions: true
-    }
-  })
-  if(!session || session.userId !== userId){
-    return null
+      questions: true,
+    },
+  });
+  if (!session || session.userId !== userId) {
+    return null;
   }
   await prisma.playSession.update({
-    where:{id: playSessionId},
-    data:{
-      isFinished: true
-    }
-  })
+    where: { id: playSessionId },
+    data: {
+      isFinished: true,
+    },
+  });
 
-  const totalScore = session.totalScore
-  const answeredCount = session.answers.length
-  const totalQuestions = session.questions.length
+  const totalScore = session.totalScore;
+  const answeredCount = session.answers.length;
+  const totalQuestions = session.questions.length;
 
-  return {totalScore, answeredCount, totalQuestions}
-}
+  return { totalScore, answeredCount, totalQuestions };
+};
 
 export const getPlaySessionHistory = async (userId) => {
   const sessions = await prisma.playSession.findMany({
-    where: { id: userId },
-    orderBy: { createAt: 'desc' },
+    where: { userId: userId },
+    orderBy: { createAt: "desc" },
     include: {
       Category: true,
       answers: true,
@@ -167,4 +167,3 @@ export const getPlaySessionHistory = async (userId) => {
     totalQuestions: session.questions.length,
   }));
 };
-

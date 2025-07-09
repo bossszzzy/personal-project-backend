@@ -27,7 +27,7 @@ model User {
 
 enum Role {
   user
-  admin
+  gm
 }
 
 model PlaySession {
@@ -41,7 +41,7 @@ model PlaySession {
   questions  PlaySessionQuestion[]
   Category   Category?             @relation(fields: [categoryId], references: [id])
   categoryId Int?
-  isFinished Boolean @default(false)
+  isFinished Boolean               @default(false)
 }
 
 model ChoiceQuestion {
@@ -54,7 +54,7 @@ model ChoiceQuestion {
   createAt     DateTime              @default(now())
   updateAt     DateTime              @updatedAt
   choices      Choice[]
-  category     Category?             @relation(fields: [categoryId], references: [id])
+  category     Category?             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId   Int
   playSessions PlaySessionQuestion[]
   PlayAnswer   PlayAnswer[]
@@ -69,7 +69,7 @@ enum GameMode {
 model PlaySessionQuestion {
   playSession   PlaySession    @relation(fields: [playSessionId], references: [id])
   playSessionId Int
-  question      ChoiceQuestion @relation(fields: [questionId], references: [id])
+  question      ChoiceQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId    Int
   assignedAt    DateTime       @default(now())
 
@@ -80,7 +80,7 @@ model PlayAnswer {
   id            Int            @id @default(autoincrement())
   playSession   PlaySession    @relation(fields: [playSessionId], references: [id])
   playSessionId Int
-  question      ChoiceQuestion @relation(fields: [questionId], references: [id])
+  question      ChoiceQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId    Int
   isCorrect     Boolean
   scoreEarned   Int            @default(0)
@@ -92,16 +92,16 @@ model Choice {
   id               Int            @id @default(autoincrement())
   choiceText       String
   isCorrect        Boolean
-  choiceQuestion   ChoiceQuestion @relation(fields: [choiceQuestionId], references: [id])
+  choiceQuestion   ChoiceQuestion @relation(fields: [choiceQuestionId], references: [id], onDelete: Cascade)
   choiceQuestionId Int
   playAnswer       PlayAnswer[]
 }
 
 model Category {
   id              Int              @id @default(autoincrement())
-  name            String
+  name            String           @unique
   description     String
-  imageUrl        String
+  imageUrl        String?
   choiceQuestions ChoiceQuestion[]
   playSession     PlaySession[]
 }

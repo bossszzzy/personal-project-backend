@@ -11,3 +11,4 @@ export const getCategoryById = async (id) => {
     },
   });
 };
+

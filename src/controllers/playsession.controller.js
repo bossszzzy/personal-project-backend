@@ -22,6 +22,8 @@ export const createPlaySession = async (req, res, next) => {
 export const getPlaySessionById = async (req, res, next) => {
   try {
     const id = +req.params.id;
+    console.log("Received ID from params:", req.params.id); // ดูค่า string ดั้งเดิม
+    console.log("Parsed ID:", id); // ดูค่าหลังจากแปลงเป็นตัวเลข
     const userId = req.userMid;
     const session = await playSessionService.getPlaySessionById(id, userId);
 
@@ -75,7 +77,10 @@ export const finishPlaySession = async (req, res, next) => {
     const playSessionId = +req.params.id;
     const userId = req.userMid;
 
-    const result = await playSessionService.finishPlaySession(playSessionId, userId);
+    const result = await playSessionService.finishPlaySession(
+      playSessionId,
+      userId
+    );
 
     if (!result) {
       createError(404, "Play session not found or unauthorized");
@@ -102,4 +107,3 @@ export const getPlaySessionHistory = async (req, res, next) => {
     next(error);
   }
 };
-

@@ -61,3 +61,4 @@ export const updatePassword = async (id, newPassword) => {
   });
   return user;
 };
+

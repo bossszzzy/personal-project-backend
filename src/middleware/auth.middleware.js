@@ -8,6 +8,7 @@ export function authMiddleware(req, res, next) {
   try {
     const payload = verifyToken(token)
     req.userMid = payload.id
+    req.userRole = payload.role
     next()
   } catch (error){
     next(error)

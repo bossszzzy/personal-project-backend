@@ -12,10 +12,12 @@ export const registerSchema = object({
       "Password must contain at least one special character"
     )
     .required("Input password"),
-    confirmPassword: string().oneOf([ref("password"),null],"Not Correct").required("Input confirmpassword"),
+  confirmPassword: string()
+    .oneOf([ref("password"), null], "Not Correct")
+    .required("Input confirmpassword"),
   firstName: string().required("Input firstname"),
   lastName: string().required("Input lastname"),
-});
+}).noUnknown();
 
 export const loginSchema = object({
   username: string()
@@ -29,5 +31,4 @@ export const loginSchema = object({
       "Password must contain at least one special character"
     )
     .required("Input password"),
-});
-
+}).noUnknown();

@@ -1,4 +1,4 @@
-import { createError } from "../utils/createError.js";
+import createError from "../utils/createError.js";
 
 export const validate = (schema, option = {}) =>{
   return async function (req,res,next) {

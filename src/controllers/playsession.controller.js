@@ -1,5 +1,5 @@
 import * as playSessionService from "../services/playsession.service.js";
-import { createError } from "../utils/createError.js";
+import createError from "../utils/createError.js";
 
 export const createPlaySession = async (req, res, next) => {
   try {

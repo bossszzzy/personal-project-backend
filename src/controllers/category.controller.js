@@ -1,5 +1,5 @@
 import * as categoryService from "../services/category.service.js";
-import { createError } from "../utils/createError.js";
+import createError from "../utils/createError.js";
 
 export const getCategory = async (req, res, next) => {
   try {

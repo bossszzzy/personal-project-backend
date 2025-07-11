@@ -1,5 +1,5 @@
 import * as authService from "../services/auth.service.js";
-import { createError } from "../utils/createError.js";
+import createError  from "../utils/createError.js";
 import * as jsonwt from "../utils/jwt.js";
 
 export const register = async (req, res, next) => {
@@ -10,14 +10,14 @@ export const register = async (req, res, next) => {
     if (foundUser) {
       createError(401, "username already Exist!");
     }
-    const result = await authService.register(
+    await authService.register(
       username,
       password,
       firstName,
       lastName,
       image
     );
-    res.json({ message: "Register success", result });
+    res.json({ message: "Register success"});
   } catch (error) {
     next(error);
   }

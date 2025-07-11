@@ -1,5 +1,5 @@
 import * as gmService from "../services/gm.service.js";
-import { createError } from "../utils/createError.js";
+import createError from "../utils/createError.js";
 
 export const createCategory = async (req, res, next) => {
   try {

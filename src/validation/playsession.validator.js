@@ -1,4 +1,4 @@
-import { object, ref, string, number } from "yup";
+import { object, ref, string, number, boolean } from "yup";
 
 export const createPlaySessionSchema = object({
   categoryId: number().required(),

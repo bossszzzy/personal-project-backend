@@ -13,7 +13,7 @@ export const registerSchema = object({
     )
     .required("Input password"),
   confirmPassword: string()
-    .oneOf([ref("password"), null], "Not Correct")
+    .oneOf([ref("password"), null], "Password must match")
     .required("Input confirmpassword"),
   firstName: string().required("Input firstname"),
   lastName: string().required("Input lastname"),

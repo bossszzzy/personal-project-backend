@@ -3,13 +3,14 @@ import { createError } from "../utils/createError.js";
 
 export const createPlaySession = async (req, res, next) => {
   try {
-    const { categoryId, gameMode, numberOfQuestion } = req.body;
+    const { categoryId, gameMode, numberOfQuestion, isTestSession } = req.body;
     const userId = req.userMid;
     const result = await playSessionService.createPlaySession(
       userId,
       categoryId,
       gameMode,
-      numberOfQuestion
+      numberOfQuestion,
+      isTestSession
     );
     if (!result) {
       createError(404, "No question found in this category and mode");

@@ -4,7 +4,8 @@ export const createPlaySession = async (
   userId,
   categoryId,
   gameMode,
-  numberOfQuestion
+  numberOfQuestion,
+  isTestSession
 ) => {
   const questions = await prisma.choiceQuestion.findMany({
     where: {
@@ -12,6 +13,9 @@ export const createPlaySession = async (
       gameMode,
     },
   });
+  if (questions.length === 0) {
+    return null;
+  }
   const shuffled = questions.sort(() => 0.5 - Math.random());
   const selected = shuffled.slice(0, numberOfQuestion);
   const session = await prisma.playSession.create({
@@ -19,6 +23,7 @@ export const createPlaySession = async (
       userId,
       categoryId,
       gameMode,
+      isTestSession: isTestSession || false, 
       questions: {
         create: selected.map((q) => ({
           question: { connect: { id: q.id } },
@@ -56,13 +61,20 @@ export const getPlaySessionById = async (id, userId) => {
   return session;
 };
 
-export const answerQuestion = async ({ playSessionId, questionId, userId, choiceId }) => {
+export const answerQuestion = async ({
+  playSessionId,
+  questionId,
+  userId,
+  choiceId,
+}) => {
   const result = {
     status: "ok",
     answer: null,
   };
 
-  const session = await prisma.playSession.findUnique({ where: { id: playSessionId } });
+  const session = await prisma.playSession.findUnique({
+    where: { id: playSessionId },
+  });
   if (!session || session.userId !== userId) {
     result.status = "unauthorized";
     return result;

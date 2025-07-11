@@ -31,17 +31,18 @@ enum Role {
 }
 
 model PlaySession {
-  id         Int                   @id @default(autoincrement())
-  user       User                  @relation(fields: [userId], references: [id])
-  userId     Int
-  createAt   DateTime              @default(now())
-  gameMode   GameMode
-  totalScore Int                   @default(0)
-  answers    PlayAnswer[]
-  questions  PlaySessionQuestion[]
-  Category   Category?             @relation(fields: [categoryId], references: [id])
-  categoryId Int?
-  isFinished Boolean               @default(false)
+  id            Int                   @id @default(autoincrement())
+  user          User                  @relation(fields: [userId], references: [id])
+  userId        Int
+  createAt      DateTime              @default(now())
+  gameMode      GameMode
+  totalScore    Int                   @default(0)
+  answers       PlayAnswer[]
+  questions     PlaySessionQuestion[]
+  Category      Category?             @relation(fields: [categoryId], references: [id])
+  categoryId    Int?
+  isFinished    Boolean               @default(false)
+  isTestSession Boolean               @default(false)
 }
 
 model ChoiceQuestion {

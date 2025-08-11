@@ -4,6 +4,8 @@ import createError from "../utils/createError.js";
 export const createPlaySession = async (req, res, next) => {
   try {
     const { categoryId, gameMode, numberOfQuestion, isTestSession } = req.body;
+    console.log('categoryId', categoryId)
+    console.log('gameMode', gameMode)
     const userId = req.userMid;
     const result = await playSessionService.createPlaySession(
       userId,
@@ -23,16 +25,14 @@ export const createPlaySession = async (req, res, next) => {
 export const getPlaySessionById = async (req, res, next) => {
   try {
     const id = +req.params.id;
-    console.log("Received ID from params:", req.params.id); // ดูค่า string ดั้งเดิม
-    console.log("Parsed ID:", id); // ดูค่าหลังจากแปลงเป็นตัวเลข
     const userId = req.userMid;
-    const session = await playSessionService.getPlaySessionById(id, userId);
-
-    if (!session) {
-      createError(404, "Play session not found or unauthorized");
+    const result = await playSessionService.getPlaySessionById(id, userId);
+    
+    if (!result) {
+      createError(404, "Play session not found");
     }
 
-    res.json({ session });
+    res.json({ result });
   } catch (error) {
     next(error);
   }

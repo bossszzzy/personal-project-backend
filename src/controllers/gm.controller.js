@@ -29,6 +29,8 @@ export const createCategory = async (req, res, next) => {
 };
 
 export const updateCategory = async (req, res, next) => {
+
+  console.log("Test updateCategory")
   try {
     if (req.userRole !== "gm") {
       createError(403, "Forbidden");
@@ -42,7 +44,8 @@ export const updateCategory = async (req, res, next) => {
       description,
       imageUrl,
     });
-
+console.log('status', status)
+console.log('category', category)
     if (status === "not-found") {
       createError(404, "Category not found");
     }
@@ -60,7 +63,7 @@ export const updateCategory = async (req, res, next) => {
 export const deleteCategory = async (req, res, next) => {
   try {
     if (req.userRole !== "gm") {
-      throw createError(403, "Forbidden");
+      createError(403, "Forbidden");
     }
 
     const categoryId = +req.params.id;
@@ -68,11 +71,11 @@ export const deleteCategory = async (req, res, next) => {
     const status = await gmService.deleteCategory(categoryId);
 
     if (status === "not-found") {
-      throw createError(404, "Category not found");
+      createError(404, "Category not found");
     }
 
     if (status === "has-questions") {
-      throw createError(400, "Cannot delete category that has questions");
+      createError(400, "Cannot delete category that has questions");
     }
 
     res.json({ message: "Category deleted" });
@@ -84,7 +87,7 @@ export const deleteCategory = async (req, res, next) => {
 export const getQuestionsByCategory = async (req, res, next) => {
   try {
     if (req.userRole !== "gm") {
-      throw createError(403, "Forbidden");
+      createError(403, "Forbidden");
     }
 
     const categoryId = +req.params.id;
@@ -100,7 +103,7 @@ export const getQuestionsByCategory = async (req, res, next) => {
 export const createQuestion = async (req, res, next) => {
   try {
     if (req.userRole !== "gm") {
-      throw createError(403, "Forbidden");
+      createError(403, "Forbidden");
     }
 
     const question = await gmService.createQuestion(req.body);
@@ -114,14 +117,14 @@ export const createQuestion = async (req, res, next) => {
 export const updateQuestion = async (req, res, next) => {
   try {
     if (req.userRole !== "gm") {
-      throw createError(403, "Forbidden");
+      createError(403, "Forbidden");
     }
 
     const questionId = +req.params.id;
     const question = await gmService.updateQuestion(questionId, req.body);
 
     if (!question) {
-      throw createError(404, "Question not found");
+      createError(404, "Question not found");
     }
 
     res.json({ message: "Question updated", question });
@@ -133,7 +136,7 @@ export const updateQuestion = async (req, res, next) => {
 export const deleteQuestion = async (req, res, next) => {
   try {
     if (req.userRole !== "gm") {
-      throw createError(403, "Forbidden");
+      createError(403, "Forbidden");
     }
 
     const questionId = +req.params.id;
@@ -141,7 +144,7 @@ export const deleteQuestion = async (req, res, next) => {
     const deleted = await gmService.deleteQuestion(questionId);
 
     if (!deleted) {
-      throw createError(404, "Question not found");
+      createError(404, "Question not found");
     }
 
     res.json({ message: "Question deleted" });
@@ -153,14 +156,14 @@ export const deleteQuestion = async (req, res, next) => {
 export const updateChoices = async (req, res, next) => {
   try {
     if (req.userRole !== "gm") {
-      throw createError(403, "Forbidden");
+      createError(403, "Forbidden");
     }
 
     const questionId = +req.params.id;
     const updated = await gmService.updateChoices(questionId, req.body.choices);
 
     if (!updated) {
-      throw createError(404, "Question not found");
+      createError(404, "Question not found");
     }
 
     res.json({ message: "Choices updated", choices: updated });

@@ -4,6 +4,7 @@ export const verifyToken = (token) => {
   const payload = jwt.verify(token, process.env.JWT_SECRET,{
     algorithms: ["HS256"]
   })
+  console.log(payload,"verifyToken")
   return payload
 }
 

@@ -13,7 +13,7 @@ gmRoute.post(
   validate(createAndUpdateCategory),
   gmController.createCategory
 );
-gmRoute.put(
+gmRoute.patch(
   "/categories/:id",
   authMiddleware,
   validate(createAndUpdateCategory),

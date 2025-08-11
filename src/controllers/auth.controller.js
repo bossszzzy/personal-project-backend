@@ -1,5 +1,5 @@
 import * as authService from "../services/auth.service.js";
-import createError  from "../utils/createError.js";
+import createError from "../utils/createError.js";
 import * as jsonwt from "../utils/jwt.js";
 
 export const register = async (req, res, next) => {
@@ -10,14 +10,8 @@ export const register = async (req, res, next) => {
     if (foundUser) {
       createError(401, "username already Exist!");
     }
-    await authService.register(
-      username,
-      password,
-      firstName,
-      lastName,
-      image
-    );
-    res.json({ message: "Register success"});
+    await authService.register(username, password, firstName, lastName, image);
+    res.json({ message: "Register success" });
   } catch (error) {
     next(error);
   }
@@ -36,15 +30,17 @@ export const login = async (req, res, next) => {
 
     const payload = {
       id: foundUser.id,
-      role: foundUser.role,
+      role: foundUser.role
     };
 
     const accessToken = jsonwt.generateToken(payload);
 
+    const { password: pw, ...userData } = foundUser;
+
     res.json({
       message: `Welcome ${foundUser.firstName}`,
-      role: foundUser.role,
-      accessToken,
+      token: accessToken,
+      user: userData,
     });
   } catch (error) {
     next(error);
@@ -66,13 +62,13 @@ export const getMe = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   try {
     const { username } = req.body;
-    console.log(username)
+    console.log(username);
     const user = await authService.findUser(username);
     if (!user) {
       createError(400, "Wrong username");
     }
-    const userId = user.id
-    console.log(userId)
+    const userId = user.id;
+    console.log(userId);
     const token = jsonwt.resetToken(userId);
     const linkUrl = "http://localhost:6969/api/auth/reset-password";
     const link = `${linkUrl}/${token}`;
@@ -85,14 +81,17 @@ export const forgotPassword = async (req, res, next) => {
 export const resetPassword = async (req, res, next) => {
   const { token } = req.params;
   const { password } = req.body;
-  console.log(token)
+  console.log(token);
   try {
     const payload = jsonwt.verifyResetToken(token);
-    console.log(payload)
-    const userId = payload.id
-    const user = await authService.updatePassword(userId, password)
-    res.json({message:"password update", user:{id: user.id, username: user.username}})
+    console.log(payload);
+    const userId = payload.id;
+    const user = await authService.updatePassword(userId, password);
+    res.json({
+      message: "password update",
+      user: { id: user.id, username: user.username },
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };

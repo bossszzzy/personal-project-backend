@@ -62,10 +62,6 @@ export const deleteCategory = async (id) => {
     return "not-found";
   }
 
-  if (category.choiceQuestions.length > 0) {
-    return "has-questions";
-  }
-
   await prisma.category.delete({ where: { id } });
 
   return "ok";

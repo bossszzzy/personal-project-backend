@@ -5,6 +5,8 @@ import playSessionRoute from "./routes/playsession.route.js";
 import categoryRoute from "./routes/category.route.js";
 import gmRoute from "./routes/gm.route.js";
 import cors from "cors"
+import morgan from "morgan";
+import errorMiddleware from "./utils/error.js";
 
 const app = express();
 app.use(cors({
@@ -12,6 +14,7 @@ app.use(cors({
 }))
 dotenv.config();
 app.use(express.json());
+app.use(morgan("dev"))
 
 const PORT = process.env.PORT || 8000;
 
@@ -22,6 +25,10 @@ app.use("/api/categories", categoryRoute);
 app.use("/api/playsession", playSessionRoute);
 
 app.use("/api/gm", gmRoute);
+
+app.use((req,res)=>{res.status(404).json({message:"Not found"})})
+
+app.use(errorMiddleware)
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

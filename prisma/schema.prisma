@@ -32,14 +32,14 @@ enum Role {
 
 model PlaySession {
   id            Int                   @id @default(autoincrement())
-  user          User                  @relation(fields: [userId], references: [id])
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        Int
   createAt      DateTime              @default(now())
   gameMode      GameMode
   totalScore    Int                   @default(0)
   answers       PlayAnswer[]
   questions     PlaySessionQuestion[]
-  Category      Category?             @relation(fields: [categoryId], references: [id])
+  Category      Category?             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId    Int?
   isFinished    Boolean               @default(false)
   isTestSession Boolean               @default(false)
@@ -68,7 +68,7 @@ enum GameMode {
 }
 
 model PlaySessionQuestion {
-  playSession   PlaySession    @relation(fields: [playSessionId], references: [id])
+  playSession   PlaySession    @relation(fields: [playSessionId], references: [id], onDelete: Cascade)
   playSessionId Int
   question      ChoiceQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId    Int
@@ -79,13 +79,13 @@ model PlaySessionQuestion {
 
 model PlayAnswer {
   id            Int            @id @default(autoincrement())
-  playSession   PlaySession    @relation(fields: [playSessionId], references: [id])
+  playSession   PlaySession    @relation(fields: [playSessionId], references: [id], onDelete: Cascade)
   playSessionId Int
   question      ChoiceQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId    Int
   isCorrect     Boolean
   scoreEarned   Int            @default(0)
-  Choice        Choice?        @relation(fields: [choiceId], references: [id])
+  Choice        Choice?        @relation(fields: [choiceId], references: [id], onDelete: Cascade)
   choiceId      Int?
 }
 

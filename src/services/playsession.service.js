@@ -10,7 +10,7 @@ export const createPlaySession = async (
   const questions = await prisma.choiceQuestion.findMany({
     where: {
       categoryId,
-      gameMode,
+      gameMode:{equals:gameMode}
     },
   });
   if (questions.length === 0) {
@@ -18,6 +18,9 @@ export const createPlaySession = async (
   }
   const shuffled = questions.sort(() => 0.5 - Math.random());
   const selected = shuffled.slice(0, numberOfQuestion);
+  // await prisma.playSession.deleteMany({
+  //   where: {userId}
+  // })
   const session = await prisma.playSession.create({
     data: {
       userId,
@@ -54,9 +57,9 @@ export const getPlaySessionById = async (id, userId) => {
     },
   });
 
-  if (!session || session.userId !== userId) {
-    return null;
-  }
+  // if (!session || session.userId !== userId) {
+  //   return null;
+  // }
 
   return session;
 };
